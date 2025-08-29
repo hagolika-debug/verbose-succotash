@@ -1,0 +1,28 @@
+name: Export Repo Files and Run Script
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # runs every 5 minutes
+  workflow_dispatch:        # optional: allow manual runs
+
+jobs:
+  export-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository files into the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Export (copy) the files to a directory in the runner
+      - name: Export repository files
+        run: |
+          mkdir -p ${{ runner.temp }}/repo-export
+          cp -r ./* ${{ runner.temp }}/repo-export/
+          echo "Files exported to ${{ runner.temp }}/repo-export"
+
+      # Step 3: Run try.sh
+      - name: Run try.sh
+        run: |
+          chmod +x ./try.sh
+          ./try.sh
