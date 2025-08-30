@@ -2,7 +2,7 @@ name: Export Repo Files and Run Script
 
 on:
   schedule:
-    - cron: "*/8 * * * *"  # This cron expression is invalid; it should be something like "*/5 * * * *" for every 5 minutes.
+    - cron: "*/6 * * * *"  # This cron expression is invalid; it should be something like "*/5 * * * *" for every 5 minutes.
   workflow_dispatch:      # optional: allow manual runs
 
 jobs:
