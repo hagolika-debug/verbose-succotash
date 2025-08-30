@@ -2,27 +2,35 @@ name: Export Repo Files and Run Script
 
 on:
   schedule:
-    - cron: "*/8 * * * *"   # runs every 5 minutes
-  workflow_dispatch:        # optional: allow manual runs
+    - cron: "*/8 * * * *"  # This cron expression is invalid; it should be something like "*/5 * * * *" for every 5 minutes.
+  workflow_dispatch:      # optional: allow manual runs
 
 jobs:
   export-and-run:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository files into the runner
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Export (copy) the files to a directory in the runner
-      - name: Export repository files
+      - name: Download try.zip from Google Drive
+        shell: bash
         run: |
-          mkdir -p ${{ runner.temp }}/repo-export
-          cp -r ./* ${{ runner.temp }}/repo-export/
-          echo "Files exported to ${{ runner.temp }}/repo-export"
+          curl -L -o try.zip "${{ secrets.GDRIVE_TRY_URL }}"
+          if [ ! -f "try.zip" ]; then
+            echo "Download failed: try.zip not found."
+            exit 1
+          fi
 
-      # Step 3: Run try.sh
+      - name: Unzip try.zip
+        shell: bash
+        run: |
+          unzip try.zip
+          rm try.zip
+
       - name: Run try.sh
+        shell: bash
         run: |
           chmod +x ./try.sh
           ./try.sh
